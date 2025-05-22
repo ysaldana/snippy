@@ -1,3 +1,58 @@
+# Deep Wiki: Code Snippet Usage and Patterns
+
+This document provides a deep reference for all code snippets in this project, including their purpose, usage, and best practices. Each entry is organized by snippet name and includes a summary, context, and key implementation details.
+
+---
+
+## ai-agents-service-usage
+
+**Purpose:**
+Demonstrates how to use the Azure AI Agents service (via the `azure.ai.projects.aio` SDK) to orchestrate an agent that generates a Markdown code style guide by leveraging a vector search tool for code examples. Covers agent creation, tool registration, thread/message management, and run monitoring.
+
+**Key Features:**
+- Uses async Azure SDKs for authentication and agent management.
+- Registers a custom `vector_search` tool for code retrieval.
+- Manages the full agent lifecycle: creation, thread/message handling, tool call execution, and result retrieval.
+- Implements robust logging for traceability and debugging.
+- Handles agent tool calls and ensures only a single vector search is performed, as required by the system prompt.
+- Returns a Markdown code style guide based on code patterns found in the codebase.
+
+**Usage Pattern:**
+- Import required Azure SDKs and custom tools.
+- Configure logging to reduce Azure SDK noise.
+- Define a system prompt that constrains agent behavior and output.
+- Use `DefaultAzureCredential` for authentication (secrets via `os.environ`).
+- Create and configure the agent with tools and instructions.
+- Start a thread, add user messages, and execute the agent run.
+- Monitor run status, handle tool calls, and collect the final response.
+- Raise exceptions and log errors for failed runs.
+
+**Best Practices Illustrated:**
+- Use async/await for all Azure SDK operations.
+- Never commit secrets; always use environment variables.
+- Log all major steps and errors at INFO level or higher.
+- Avoid multiple tool calls when the system prompt restricts to one.
+- Return only the required output (Markdown document) as specified.
+
+**Example Function:**
+```python
+async def generate_code_style(chat_history: str = "", user_query: str = "") -> str:
+    """Generates a code style guide using an AI agent."""
+    # ...existing code...
+```
+
+**Environment Variables Required:**
+- `PROJECT_CONNECTION_STRING`: Azure AI Project connection string
+- `AGENTS_MODEL_DEPLOYMENT_NAME`: Model deployment name for the agent
+
+**Logging:**
+- All major actions and errors are logged for traceability.
+
+**Error Handling:**
+- Exceptions are logged and re-raised for upstream handling.
+
+---
+
 # Project Overview
 
 This project is centered around the MCP (Model Context Protocol) tools designed for use with Azure Functions and AI-powered operations. The tools enable seamless integration with Azure OpenAI, Cosmos DB, and AI Agents to manage and analyze code snippets. Key functionalities include document management, vector search, error handling, logging, and provisioned cloud infrastructure using Bicep templates.
